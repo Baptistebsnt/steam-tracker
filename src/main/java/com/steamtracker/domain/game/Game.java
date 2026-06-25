@@ -24,7 +24,7 @@ public class Game {
     private User user;
 
     @Column(name = "app_id")
-    private String appId;
+    private Long appId;
 
     @Column
     private String name;

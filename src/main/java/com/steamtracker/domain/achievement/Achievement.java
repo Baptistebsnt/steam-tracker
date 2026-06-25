@@ -27,8 +27,8 @@ public class Achievement {
     @Column(name = "api_name", nullable = false)
     private String apiName;
 
-    @Column(name = "diplay_name")
-    private String diplayName;
+    @Column(name = "display_name")
+    private String displayName;
 
     @Column
     private String description;
