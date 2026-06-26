@@ -5,11 +5,11 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/games/{{appId}}/achievements
+  url: {{baseUrl}}/games/:appId/achievements
   body: none
-  auth: bearer
+  auth: inherit
 }
 
-auth:bearer {
-  token: {{token}}
+params:path {
+  appId: 489830
 }

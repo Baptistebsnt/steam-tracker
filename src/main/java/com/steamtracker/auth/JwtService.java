@@ -1,15 +1,18 @@
 package com.steamtracker.auth;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -32,20 +35,20 @@ public class JwtService {
                 .compact();
     }
 
-    public String extractEmail(String token) {
-        return extractClaims(token).getSubject();
-    }
-
-    public boolean isTokenValid(String token) {
+    /**
+     * Returns the email from the token, or empty if the token is invalid or expired.
+     */
+    public Optional<String> extractEmailIfValid(String token) {
         try {
-            extractClaims(token);
-            return true;
-        } catch (Exception e) {
-            return false;
+            String email = parseClaims(token).getSubject();
+            return Optional.ofNullable(email);
+        } catch (JwtException e) {
+            log.debug("Invalid JWT token: {}", e.getMessage());
+            return Optional.empty();
         }
     }
 
-    private Claims extractClaims(String token) {
+    private Claims parseClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
