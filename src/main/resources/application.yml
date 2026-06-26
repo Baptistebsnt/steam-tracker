@@ -21,6 +21,14 @@ spring:
     virtual:
       enabled: true
 
+logging:
+  level:
+    com.steamtracker.auth: DEBUG
+
+springdoc:
+  swagger-ui:
+    persist-authorization: true
+
 steam:
   api:
     key: ${STEAM_API_KEY}
