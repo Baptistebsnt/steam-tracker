@@ -1,15 +1,18 @@
 package com.steamtracker.steam;
 
 import com.steamtracker.steam.dto.SteamAchievementDto;
+import com.steamtracker.steam.dto.SteamAchievementSchemaDto;
 import com.steamtracker.steam.dto.SteamGameDto;
 import com.steamtracker.steam.dto.SteamPlayerSummaryDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class SteamClient {
@@ -58,6 +61,8 @@ public class SteamClient {
         }
     }
 
+    // 403 = jeu sans achievements ou stats privées → résultat attendu, on retourne liste vide
+    // l=english pour récupérer name (displayName) et description directement
     public List<SteamAchievementDto> getPlayerAchievements(String steamId, Long appId) {
         try {
             var response = webClient.get()
@@ -66,9 +71,11 @@ public class SteamClient {
                             .queryParam("key", apiKey)
                             .queryParam("steamid", steamId)
                             .queryParam("appid", appId)
+                            .queryParam("l", "english")
                             .queryParam("format", "json")
                             .build())
                     .retrieve()
+                    .onStatus(status -> status.value() == 403, ignored -> Mono.empty())
                     .bodyToMono(Map.class)
                     .block();
 
@@ -84,12 +91,56 @@ public class SteamClient {
                     .map(a -> new SteamAchievementDto(
                             (String) a.get("apiname"),
                             ((Number) a.getOrDefault("achieved", 0)).intValue(),
-                            ((Number) a.getOrDefault("unlocktime", 0)).longValue()
+                            ((Number) a.getOrDefault("unlocktime", 0)).longValue(),
+                            (String) a.getOrDefault("name", ""),
+                            (String) a.getOrDefault("description", "")
                     ))
                     .toList();
 
         } catch (Exception e) {
             return Collections.emptyList();
+        }
+    }
+
+    // 403 = jeu sans schema de stats → résultat attendu, on retourne map vide
+    public Map<String, SteamAchievementSchemaDto> getAchievementSchema(Long appId) {
+        try {
+            var response = webClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/ISteamUserStats/GetSchemaForGame/v2/")
+                            .queryParam("key", apiKey)
+                            .queryParam("appid", appId)
+                            .queryParam("format", "json")
+                            .build())
+                    .retrieve()
+                    .onStatus(status -> status.value() == 403, ignored -> Mono.empty())
+                    .bodyToMono(Map.class)
+                    .block();
+
+            if (response == null) return Collections.emptyMap();
+
+            var game = (Map<?, ?>) response.get("game");
+            if (game == null) return Collections.emptyMap();
+
+            var availableStats = (Map<?, ?>) game.get("availableGameStats");
+            if (availableStats == null || !availableStats.containsKey("achievements")) {
+                return Collections.emptyMap();
+            }
+
+            var achievements = (List<Map<String, Object>>) availableStats.get("achievements");
+            return achievements.stream()
+                    .collect(Collectors.toMap(
+                            a -> (String) a.get("name"),
+                            a -> new SteamAchievementSchemaDto(
+                                    (String) a.get("name"),
+                                    (String) a.getOrDefault("displayName", ""),
+                                    (String) a.getOrDefault("description", ""),
+                                    (String) a.getOrDefault("icon", "")
+                            )
+                    ));
+
+        } catch (Exception e) {
+            return Collections.emptyMap();
         }
     }
 
@@ -113,7 +164,7 @@ public class SteamClient {
 
             if (players == null || players.isEmpty()) return null;
 
-            var player = players.get(0);
+            var player = players.getFirst();
             return new SteamPlayerSummaryDto(
                     (String) player.get("steamid"),
                     (String) player.get("personaname"),
