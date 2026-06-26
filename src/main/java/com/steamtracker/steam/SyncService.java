@@ -6,6 +6,7 @@ import com.steamtracker.domain.game.Game;
 import com.steamtracker.domain.game.GameRepository;
 import com.steamtracker.domain.user.User;
 import com.steamtracker.domain.user.UserRepository;
+import com.steamtracker.steam.dto.SteamAchievementDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,9 +59,13 @@ public class SyncService {
             var game = syncGame(user, steamGame.appId(), steamGame.name(), steamGame.playtimeMinutes());
             gamesSynced.incrementAndGet();
 
+            var schema = steamClient.getAchievementSchema(steamGame.appId());
             var steamAchievements = steamClient.getPlayerAchievements(user.getSteamId(), steamGame.appId());
             for (var steamAchievement : steamAchievements) {
-                syncAchievement(game, steamAchievement.apiName(), steamAchievement.achieved(), steamAchievement.unlockTime());
+                var iconUrl = schema.containsKey(steamAchievement.apiName())
+                        ? schema.get(steamAchievement.apiName()).iconUrl()
+                        : null;
+                syncAchievement(game, steamAchievement, iconUrl);
                 achievementsSynced.incrementAndGet();
             }
         }
@@ -86,29 +91,25 @@ public class SyncService {
                 });
     }
 
-    private void syncAchievement(Game game, String apiName, int achieved, Long unlockTime) {
-        var existing = achievementRepository.findByGameIdAndApiName(game.getId(), apiName);
+    private void syncAchievement(Game game, SteamAchievementDto dto, String iconUrl) {
+        var existing = achievementRepository.findByGameIdAndApiName(game.getId(), dto.apiName());
 
-        if (existing.isPresent()) {
-            var achievement = existing.get();
-            achievement.setUnlocked(achieved == 1);
-            if (achieved == 1 && unlockTime != null && unlockTime > 0) {
-                achievement.setUnlockedAt(
-                        LocalDateTime.ofInstant(Instant.ofEpochSecond(unlockTime), ZoneId.systemDefault())
-                );
-            }
-            achievementRepository.save(achievement);
-        } else {
-            var achievement = new Achievement();
-            achievement.setGame(game);
-            achievement.setApiName(apiName);
-            achievement.setUnlocked(achieved == 1);
-            if (achieved == 1 && unlockTime != null && unlockTime > 0) {
-                achievement.setUnlockedAt(
-                        LocalDateTime.ofInstant(Instant.ofEpochSecond(unlockTime), ZoneId.systemDefault())
-                );
-            }
-            achievementRepository.save(achievement);
+        var achievement = existing.orElseGet(() -> {
+            var a = new Achievement();
+            a.setGame(game);
+            a.setApiName(dto.apiName());
+            return a;
+        });
+
+        achievement.setDisplayName(dto.displayName());
+        achievement.setDescription(dto.description());
+        if (iconUrl != null) achievement.setIconUrl(iconUrl);
+        achievement.setUnlocked(dto.achieved() == 1);
+        if (dto.achieved() == 1 && dto.unlockTime() != null && dto.unlockTime() > 0) {
+            achievement.setUnlockedAt(
+                    LocalDateTime.ofInstant(Instant.ofEpochSecond(dto.unlockTime()), ZoneId.systemDefault())
+            );
         }
+        achievementRepository.save(achievement);
     }
 }
