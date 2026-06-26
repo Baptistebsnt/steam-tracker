@@ -1,6 +1,12 @@
 package com.steamtracker.steam;
 
 import com.steamtracker.error.ApiError;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/sync")
+@Tag(name = "Sync", description = "Synchronize library and achievements from Steam")
 public class SyncController {
 
     private final SyncService syncService;
@@ -20,6 +27,19 @@ public class SyncController {
     }
 
     @PostMapping
+    @Operation(summary = "Sync games and achievements from the Steam API")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Sync successful",
+                    content = @Content(schema = @Schema(implementation = SyncResponse.class))),
+            @ApiResponse(responseCode = "403", description = "Steam profile is private",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "429", description = "Steam API rate limit reached",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Sync failed",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
     public ResponseEntity<?> sync(@AuthenticationPrincipal UserDetails userDetails) {
         var result = syncService.syncUser(userDetails.getUsername());
 
