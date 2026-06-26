@@ -2,17 +2,10 @@ package com.steamtracker.domain.game;
 
 import com.steamtracker.domain.user.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "games")
-@Getter
-@Setter
-@NoArgsConstructor
 public class Game {
 
     @Id
@@ -34,4 +27,22 @@ public class Game {
 
     @Column(name = "last_synced_at")
     private LocalDateTime lastSyncedAt;
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public User getUser() { return user; }
+    public void setUser(User user) { this.user = user; }
+
+    public Long getAppId() { return appId; }
+    public void setAppId(Long appId) { this.appId = appId; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public Long getPlaytimeMinutes() { return playtimeMinutes; }
+    public void setPlaytimeMinutes(Long playtimeMinutes) { this.playtimeMinutes = playtimeMinutes; }
+
+    public LocalDateTime getLastSyncedAt() { return lastSyncedAt; }
+    public void setLastSyncedAt(LocalDateTime lastSyncedAt) { this.lastSyncedAt = lastSyncedAt; }
 }
