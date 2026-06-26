@@ -6,6 +6,7 @@ import com.steamtracker.domain.game.Game;
 import com.steamtracker.domain.game.GameRepository;
 import com.steamtracker.domain.user.User;
 import com.steamtracker.domain.user.UserRepository;
+import com.steamtracker.error.ResourceNotFoundException;
 import com.steamtracker.steam.dto.SteamAchievementDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class SyncService {
     @Transactional
     public SyncResult syncUser(String email) {
         var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
         if (user.getSteamId() == null) {
             return new SyncResult.Failed("Aucun SteamID lié au compte");

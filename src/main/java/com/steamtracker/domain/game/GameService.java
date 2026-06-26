@@ -6,6 +6,7 @@ import com.steamtracker.domain.achievement.dto.AchievementDto;
 import com.steamtracker.domain.game.dto.GameDto;
 import com.steamtracker.domain.game.dto.GlobalStatsDto;
 import com.steamtracker.domain.user.UserRepository;
+import com.steamtracker.error.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,7 +34,7 @@ public class GameService {
 
     public List<GameDto> getGamesForUser(String email) {
         var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
         return gameRepository.findByUserId(user.getId())
                 .stream()
@@ -49,10 +50,10 @@ public class GameService {
 
     public List<AchievementDto> getAchievementsForGame(String email, Long appId) {
         var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
         var game = gameRepository.findByUserIdAndAppId(user.getId(), appId)
-                .orElseThrow(() -> new IllegalArgumentException("Jeu introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Jeu introuvable"));
 
         return achievementRepository.findByGameId(game.getId())
                 .stream()
@@ -62,7 +63,7 @@ public class GameService {
 
     public GlobalStatsDto getGlobalStats(String email) {
         var user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
         var games = gameRepository.findByUserId(user.getId());
         long totalPlaytime = games.stream().mapToLong(g -> g.getPlaytimeMinutes() != null ? g.getPlaytimeMinutes() : 0).sum();

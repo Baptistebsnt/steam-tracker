@@ -5,6 +5,8 @@ import com.steamtracker.auth.dto.LoginRequest;
 import com.steamtracker.auth.dto.RegisterRequest;
 import com.steamtracker.domain.user.User;
 import com.steamtracker.domain.user.UserRepository;
+import com.steamtracker.error.ConflictException;
+import com.steamtracker.error.ResourceNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +32,7 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email déjà utilisé");
+            throw new ConflictException("Email déjà utilisé");
         }
 
         var user = new User();
@@ -53,7 +55,7 @@ public class AuthService {
         );
 
         var user = userRepository.findByEmail(request.email())
-                .orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable"));
+                .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
         var token = jwtService.generateToken(user.getEmail());
         return new AuthResponse(token, user.getEmail(), user.getSteamId());
