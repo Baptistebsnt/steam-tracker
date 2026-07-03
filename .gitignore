@@ -1,16 +1,5 @@
-# Compiled class file
+# ── Java / Maven ──────────────────────────────────────────────
 *.class
-
-# Log file
-*.log
-
-# BlueJ files
-*.ctxt
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
 *.jar
 *.war
 *.nar
@@ -18,19 +7,27 @@
 *.zip
 *.tar.gz
 *.rar
-
-# virtual machine crash logs
+*.log
+*.ctxt
+.mtj.tmp/
 hs_err_pid*
 replay_pid*
+sources/back-end/target/
 
+# ── Node / React ───────────────────────────────────────────────
+node_modules/
+sources/front-end/dist/
+sources/front-end/.env.local
+
+# ── Env & secrets ─────────────────────────────────────────────
 .env
-src/main/resources/application.yml
-.idea
-target/
+sources/back-end/src/main/resources/application.yml
+sources/back-end/bruno/*.secret.bru
 
-# macOS
+# ── IDE ────────────────────────────────────────────────────────
+.idea/
+*.iml
+
+# ── macOS ──────────────────────────────────────────────────────
 .DS_Store
 **/.DS_Store
-
-# Bruno secrets
-*.secret.bru

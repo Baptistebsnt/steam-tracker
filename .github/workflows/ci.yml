@@ -22,6 +22,7 @@ jobs:
           cache: maven
 
       - name: Compile
+        working-directory: sources/back-end
         run: mvn -B package -DskipTests --no-transfer-progress
 
   test:
@@ -55,6 +56,7 @@ jobs:
           cache: maven
 
       - name: Run tests
+        working-directory: sources/back-end
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/steamtracker
           SPRING_DATASOURCE_USERNAME: steam
