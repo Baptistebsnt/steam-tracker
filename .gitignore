@@ -18,6 +18,7 @@ sources/back-end/target/
 node_modules/
 sources/front-end/dist/
 sources/front-end/.env.local
+sources/front-end/.vite/
 
 # ── Env & secrets ─────────────────────────────────────────────
 .env

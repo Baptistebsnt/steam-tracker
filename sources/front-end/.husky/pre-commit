@@ -1,0 +1,1 @@
+cd sources/front-end && pnpm exec lint-staged
