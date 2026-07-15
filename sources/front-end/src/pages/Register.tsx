@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,6 +10,7 @@ import { ApiError } from '@/lib/api'
 
 function Register() {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { register } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -24,7 +26,7 @@ function Register() {
       await register(email, password, steamId || undefined)
       navigate('/dashboard')
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Une erreur est survenue.')
+      setError(err instanceof ApiError ? err.message : t('common.genericError'))
     } finally {
       setIsSubmitting(false)
     }
@@ -34,13 +36,13 @@ function Register() {
     <div className="dark flex min-h-svh items-center justify-center bg-background text-foreground">
       <Card className="w-full max-w-sm border-border bg-card">
         <CardHeader>
-          <CardTitle>Créer un compte</CardTitle>
-          <CardDescription>Connecte ton Steam ID pour commencer le suivi.</CardDescription>
+          <CardTitle>{t('register.title')}</CardTitle>
+          <CardDescription>{t('register.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('common.email')}</Label>
               <Input
                 id="email"
                 type="email"
@@ -51,7 +53,7 @@ function Register() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{t('common.password')}</Label>
               <Input
                 id="password"
                 type="password"
@@ -63,7 +65,7 @@ function Register() {
               />
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="steamId">Steam ID (optionnel)</Label>
+              <Label htmlFor="steamId">{t('register.steamId')}</Label>
               <Input
                 id="steamId"
                 type="text"
@@ -73,13 +75,13 @@ function Register() {
             </div>
             {error && <p className="text-sm text-rose-400">{error}</p>}
             <Button type="submit" disabled={isSubmitting} className="mt-2">
-              {isSubmitting ? 'Création…' : 'Créer mon compte'}
+              {isSubmitting ? t('register.submitting') : t('register.submit')}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Déjà un compte&nbsp;?{' '}
+            {t('register.haveAccount')}{' '}
             <Link to="/login" className="text-amber-400 hover:underline">
-              Se connecter
+              {t('common.login')}
             </Link>
           </p>
         </CardContent>

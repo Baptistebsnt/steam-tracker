@@ -1,0 +1,77 @@
+{
+  "common": {
+    "appName": "steam-tracker",
+    "email": "Email",
+    "password": "Password",
+    "login": "Log in",
+    "logout": "Log out",
+    "genericError": "Something went wrong."
+  },
+  "landing": {
+    "nav": {
+      "dashboard": "My dashboard"
+    },
+    "hero": {
+      "eyebrow": "// backlog, playtime & price watch",
+      "title": "Finally know what's happening in your library.",
+      "subtitle": "Steam Tracker watches your games while you're not playing: backlog gathering dust, price drops, real playtime.",
+      "ctaConnect": "Connect my Steam ID",
+      "ctaDemo": "See a demo"
+    },
+    "stats": {
+      "gamesTracked": "games tracked",
+      "playtimeLogged": "playtime logged",
+      "priceDrops": "price drops"
+    },
+    "alertsLabel": "Latest alerts",
+    "features": {
+      "backlog": {
+        "title": "Backlog radar",
+        "body": "Spot the games you bought and never launched, sorted by how long they've been forgotten."
+      },
+      "price": {
+        "title": "Price watch",
+        "body": "Get alerted as soon as a game on your list drops below your target price."
+      },
+      "playtime": {
+        "title": "Playtime ledger",
+        "body": "A precise record of your playtime, week by week, per game."
+      }
+    },
+    "footer": {
+      "lastSync": "last sync: just now"
+    }
+  },
+  "login": {
+    "title": "Log in",
+    "description": "Access your steam-tracker dashboard.",
+    "submit": "Log in",
+    "submitting": "Logging in…",
+    "noAccount": "No account yet?",
+    "createAccount": "Create an account"
+  },
+  "register": {
+    "title": "Create an account",
+    "description": "Connect your Steam ID to start tracking.",
+    "steamId": "Steam ID (optional)",
+    "submit": "Create my account",
+    "submitting": "Creating…",
+    "haveAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "sync": "Sync",
+    "syncing": "Syncing…",
+    "loadError": "Unable to load your data.",
+    "syncError": "Sync failed.",
+    "stats": {
+      "gamesTracked": "games tracked",
+      "playtimeLogged": "playtime logged"
+    },
+    "library": "Your library",
+    "loading": "Loading…",
+    "empty": "No games synced yet. Run a sync.",
+    "playtimePlayed": "{{hours}}h played",
+    "steamIdLinked": "steam id: {{steamId}}",
+    "steamIdNone": "no steam id linked"
+  }
+}
