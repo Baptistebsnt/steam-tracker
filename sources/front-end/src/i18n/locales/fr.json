@@ -1,0 +1,77 @@
+{
+  "common": {
+    "appName": "steam-tracker",
+    "email": "Email",
+    "password": "Mot de passe",
+    "login": "Se connecter",
+    "logout": "Déconnexion",
+    "genericError": "Une erreur est survenue."
+  },
+  "landing": {
+    "nav": {
+      "dashboard": "Mon dashboard"
+    },
+    "hero": {
+      "eyebrow": "// backlog, playtime & price watch",
+      "title": "Sache enfin ce qui se passe dans ta bibliothèque.",
+      "subtitle": "Steam Tracker surveille tes jeux pendant que tu n'y joues pas : backlog qui prend la poussière, baisses de prix, temps de jeu réel.",
+      "ctaConnect": "Connecter mon Steam ID",
+      "ctaDemo": "Voir une démo"
+    },
+    "stats": {
+      "gamesTracked": "jeux suivis",
+      "playtimeLogged": "temps loggé",
+      "priceDrops": "baisses de prix"
+    },
+    "alertsLabel": "Dernières alertes",
+    "features": {
+      "backlog": {
+        "title": "Backlog radar",
+        "body": "Repère les jeux achetés et jamais lancés, classés par temps d'oubli."
+      },
+      "price": {
+        "title": "Price watch",
+        "body": "Alerte dès qu'un jeu de ta liste passe sous ton prix cible."
+      },
+      "playtime": {
+        "title": "Playtime ledger",
+        "body": "Un relevé précis du temps joué, semaine par semaine, par jeu."
+      }
+    },
+    "footer": {
+      "lastSync": "dernière synchro : à l'instant"
+    }
+  },
+  "login": {
+    "title": "Se connecter",
+    "description": "Accède à ton dashboard steam-tracker.",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "noAccount": "Pas encore de compte ?",
+    "createAccount": "Créer un compte"
+  },
+  "register": {
+    "title": "Créer un compte",
+    "description": "Connecte ton Steam ID pour commencer le suivi.",
+    "steamId": "Steam ID (optionnel)",
+    "submit": "Créer mon compte",
+    "submitting": "Création…",
+    "haveAccount": "Déjà un compte ?"
+  },
+  "dashboard": {
+    "sync": "Synchroniser",
+    "syncing": "Synchro…",
+    "loadError": "Impossible de charger tes données.",
+    "syncError": "La synchronisation a échoué.",
+    "stats": {
+      "gamesTracked": "jeux suivis",
+      "playtimeLogged": "temps loggé"
+    },
+    "library": "Ta bibliothèque",
+    "loading": "Chargement…",
+    "empty": "Aucun jeu synchronisé pour l'instant. Lance une synchronisation.",
+    "playtimePlayed": "{{hours}}h joué",
+    "steamIdLinked": "steam id : {{steamId}}",
+    "steamIdNone": "aucun steam id lié"
+  }
+}
