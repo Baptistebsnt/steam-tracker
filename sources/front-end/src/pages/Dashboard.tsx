@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { useAuth } from '@/lib/auth'
 import { ApiError, gamesApi, syncApi, type GameDto, type GlobalStatsDto } from '@/lib/api'
 import { RefreshCw } from 'lucide-react'
 
-function formatPlaytime(minutes: number) {
-  return `${Math.round(minutes / 60)}h`
+function toHours(minutes: number) {
+  return Math.round(minutes / 60)
 }
 
 function Dashboard() {
+  const { t } = useTranslation()
   const { user, logout } = useAuth()
   const [games, setGames] = useState<GameDto[]>([])
   const [stats, setStats] = useState<GlobalStatsDto | null>(null)
@@ -26,7 +29,7 @@ function Dashboard() {
       setGames(gamesRes)
       setStats(statsRes)
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'Impossible de charger tes données.')
+      setError(err instanceof ApiError ? err.message : t('dashboard.loadError'))
     } finally {
       setIsLoading(false)
     }
@@ -43,7 +46,7 @@ function Dashboard() {
       await syncApi.sync()
       await loadData()
     } catch (err) {
-      setError(err instanceof ApiError ? err.message : 'La synchronisation a échoué.')
+      setError(err instanceof ApiError ? err.message : t('dashboard.syncError'))
     } finally {
       setIsSyncing(false)
     }
@@ -58,6 +61,7 @@ function Dashboard() {
             {user?.email}
           </div>
           <div className="flex items-center gap-2">
+            <LanguageSwitcher className="mr-1" />
             <Button
               size="sm"
               variant="outline"
@@ -66,10 +70,10 @@ function Dashboard() {
               className="gap-1.5 font-mono text-xs"
             >
               <RefreshCw className={isSyncing ? 'size-3.5 animate-spin' : 'size-3.5'} />
-              {isSyncing ? 'Synchro…' : 'Synchroniser'}
+              {isSyncing ? t('dashboard.syncing') : t('dashboard.sync')}
             </Button>
             <Button variant="ghost" size="sm" className="font-mono text-xs" onClick={logout}>
-              Déconnexion
+              {t('common.logout')}
             </Button>
           </div>
         </header>
@@ -83,8 +87,11 @@ function Dashboard() {
 
           <dl className="grid grid-cols-2 divide-x divide-border border-y border-border font-mono sm:grid-cols-3">
             {[
-              ['jeux suivis', stats ? String(stats.gamesTracked) : '—'],
-              ['temps loggé', stats ? formatPlaytime(stats.totalPlaytimeMinutes) : '—'],
+              [t('dashboard.stats.gamesTracked'), stats ? String(stats.gamesTracked) : '—'],
+              [
+                t('dashboard.stats.playtimeLogged'),
+                stats ? `${toHours(stats.totalPlaytimeMinutes)}h` : '—',
+              ],
             ].map(([label, value]) => (
               <div key={label} className="px-4 py-4 first:pl-0">
                 <dt className="text-2xl font-medium text-foreground">{value}</dt>
@@ -95,20 +102,18 @@ function Dashboard() {
 
           <section className="flex flex-col gap-3">
             <h2 className="font-mono text-xs tracking-widest text-muted-foreground uppercase">
-              Ta bibliothèque
+              {t('dashboard.library')}
             </h2>
-            {isLoading && <p className="text-sm text-muted-foreground">Chargement…</p>}
+            {isLoading && <p className="text-sm text-muted-foreground">{t('dashboard.loading')}</p>}
             {!isLoading && games.length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                Aucun jeu synchronisé pour l'instant. Lance une synchronisation.
-              </p>
+              <p className="text-sm text-muted-foreground">{t('dashboard.empty')}</p>
             )}
             <div className="grid gap-3 sm:grid-cols-2">
               {games.map((game) => (
                 <Card key={game.appId} className="gap-1 rounded-md border-border bg-card p-4">
                   <h3 className="text-sm font-medium">{game.name}</h3>
                   <p className="text-sm text-muted-foreground">
-                    {formatPlaytime(game.playtimeMinutes)} joué
+                    {t('dashboard.playtimePlayed', { hours: toHours(game.playtimeMinutes) })}
                   </p>
                 </Card>
               ))}
@@ -118,8 +123,12 @@ function Dashboard() {
 
         <Separator className="bg-border" />
         <footer className="flex items-center justify-between py-6 font-mono text-[11px] text-muted-foreground">
-          <span>steam-tracker</span>
-          <span>{user?.steamId ? `steam id: ${user.steamId}` : 'aucun steam id lié'}</span>
+          <span>{t('common.appName')}</span>
+          <span>
+            {user?.steamId
+              ? t('dashboard.steamIdLinked', { steamId: user.steamId })
+              : t('dashboard.steamIdNone')}
+          </span>
         </footer>
       </div>
     </div>
