@@ -85,8 +85,11 @@ export const gamesApi = {
   achievements: (appId: number) => request<AchievementDto[]>(`/games/${appId}/achievements`),
 }
 
+export type SyncStatus = 'IDLE' | 'RUNNING' | 'DONE' | 'PRIVATE' | 'RATE_LIMITED' | 'FAILED'
+
 export const syncApi = {
   sync: () => request<void>('/sync', { method: 'POST' }),
+  status: () => request<{ status: SyncStatus }>('/sync/status'),
 }
 
 export type UserProfileDto = {

@@ -61,6 +61,11 @@
     "syncing": "Syncing…",
     "loadError": "Unable to load your data.",
     "syncError": "Sync failed.",
+    "syncStatus": {
+      "running": "Syncing your Steam library… this can take a moment.",
+      "private": "Couldn't reach your Steam library. Make sure your game details and profile are set to public, then re-sync.",
+      "failed": "Steam sync failed. Try again in a moment."
+    },
     "stats": {
       "gamesTracked": "games tracked",
       "playtimeLogged": "playtime logged",

@@ -61,6 +61,11 @@
     "syncing": "Synchro…",
     "loadError": "Impossible de charger tes données.",
     "syncError": "La synchronisation a échoué.",
+    "syncStatus": {
+      "running": "Synchronisation de ta bibliothèque Steam… ça peut prendre un moment.",
+      "private": "Impossible d'accéder à ta bibliothèque Steam. Vérifie que tes détails de jeux et ton profil sont publics, puis relance la synchro.",
+      "failed": "La synchronisation Steam a échoué. Réessaie dans un instant."
+    },
     "stats": {
       "gamesTracked": "jeux suivis",
       "playtimeLogged": "temps loggé",

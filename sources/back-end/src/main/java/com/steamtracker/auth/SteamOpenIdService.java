@@ -80,6 +80,20 @@ public class SteamOpenIdService {
             return Optional.empty();
         }
 
+        // Only accept assertions issued by Steam and addressed to our own callback,
+        // so a forged redirect can't replay someone else's authentication here.
+        var opEndpoint = params.get("openid.op_endpoint");
+        if (opEndpoint == null || !opEndpoint.startsWith(STEAM_OPENID_ENDPOINT)) {
+            log.warn("Steam OpenID assertion has unexpected op_endpoint: {}", opEndpoint);
+            return Optional.empty();
+        }
+
+        var returnTo = params.get("openid.return_to");
+        if (!(backendUrl + "/auth/steam/callback").equals(returnTo)) {
+            log.warn("Steam OpenID assertion has unexpected return_to: {}", returnTo);
+            return Optional.empty();
+        }
+
         MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         params.forEach(form::add);
         form.set("openid.mode", "check_authentication");

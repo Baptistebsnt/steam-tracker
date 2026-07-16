@@ -1,116 +1,117 @@
 package com.steamtracker.steam;
 
-import com.steamtracker.domain.achievement.Achievement;
-import com.steamtracker.domain.achievement.AchievementRepository;
-import com.steamtracker.domain.game.Game;
-import com.steamtracker.domain.game.GameRepository;
-import com.steamtracker.domain.user.User;
 import com.steamtracker.domain.user.UserRepository;
 import com.steamtracker.error.ResourceNotFoundException;
-import com.steamtracker.steam.dto.SteamAchievementDto;
+import com.steamtracker.steam.dto.SteamGameDto;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.Semaphore;
 
+@Slf4j
 @Service
 public class SyncService {
 
     private final SteamClient steamClient;
     private final UserRepository userRepository;
-    private final GameRepository gameRepository;
-    private final AchievementRepository achievementRepository;
+    private final SyncPersistenceService persistenceService;
+    private final SyncStatusService statusService;
+    private final int concurrency;
 
     public SyncService(SteamClient steamClient,
                        UserRepository userRepository,
-                       GameRepository gameRepository,
-                       AchievementRepository achievementRepository) {
+                       SyncPersistenceService persistenceService,
+                       SyncStatusService statusService,
+                       @Value("${steam.sync.concurrency:8}") int concurrency) {
         this.steamClient = steamClient;
         this.userRepository = userRepository;
-        this.gameRepository = gameRepository;
-        this.achievementRepository = achievementRepository;
+        this.persistenceService = persistenceService;
+        this.statusService = statusService;
+        this.concurrency = concurrency;
     }
 
-    @Transactional
     public SyncResult syncUser(String email) {
+        statusService.markRunning(email);
+        try {
+            var result = doSync(email);
+            statusService.markFinished(email, result);
+            return result;
+        } catch (RuntimeException e) {
+            statusService.markFailed(email);
+            throw e;
+        }
+    }
+
+    private SyncResult doSync(String email) {
         var user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
-        if (user.getSteamId() == null) {
+        var steamId = user.getSteamId();
+        if (steamId == null) {
             return new SyncResult.Failed("Aucun SteamID lié au compte");
         }
 
-        var profile = steamClient.getPlayerSummary(user.getSteamId());
-        if (profile == null) {
-            return new SyncResult.ProfilePrivate(user.getSteamId());
+        if (steamClient.getPlayerSummary(steamId) == null) {
+            return new SyncResult.ProfilePrivate(steamId);
         }
 
-        var steamGames = steamClient.getOwnedGames(user.getSteamId());
+        var steamGames = steamClient.getOwnedGames(steamId);
         if (steamGames.isEmpty()) {
-            return new SyncResult.ProfilePrivate(user.getSteamId());
+            return new SyncResult.ProfilePrivate(steamId);
         }
 
-        var gamesSynced = new AtomicInteger(0);
-        var achievementsSynced = new AtomicInteger(0);
+        // Fetch phase: the achievement calls dominate the wall-clock time, so fan
+        // them out across virtual threads, capped so we don't hammer the Steam API.
+        var fetched = fetchGames(steamId, steamGames);
 
-        for (var steamGame : steamGames) {
-            var game = syncGame(user, steamGame.appId(), steamGame.name(), steamGame.playtimeMinutes());
-            gamesSynced.incrementAndGet();
+        // Persistence phase: single transaction, single thread.
+        return persistenceService.persist(user.getId(), fetched);
+    }
 
-            var schema = steamClient.getAchievementSchema(steamGame.appId());
-            var steamAchievements = steamClient.getPlayerAchievements(user.getSteamId(), steamGame.appId());
-            for (var steamAchievement : steamAchievements) {
-                var iconUrl = schema.containsKey(steamAchievement.apiName())
-                        ? schema.get(steamAchievement.apiName()).iconUrl()
-                        : null;
-                syncAchievement(game, steamAchievement, iconUrl);
-                achievementsSynced.incrementAndGet();
+    private List<GameSyncData> fetchGames(String steamId, List<SteamGameDto> steamGames) {
+        var limiter = new Semaphore(concurrency);
+
+        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            var futures = steamGames.stream()
+                    .map(game -> executor.submit(fetchGame(steamId, game, limiter)))
+                    .toList();
+
+            return futures.stream().map(this::await).toList();
+        }
+    }
+
+    private Callable<GameSyncData> fetchGame(String steamId, SteamGameDto game, Semaphore limiter) {
+        return () -> {
+            limiter.acquire();
+            try {
+                var schema = steamClient.getAchievementSchema(game.appId());
+                var achievements = steamClient.getPlayerAchievements(steamId, game.appId()).stream()
+                        .map(a -> {
+                            var meta = schema.get(a.apiName());
+                            return new AchievementSyncData(a, meta != null ? meta.iconUrl() : null);
+                        })
+                        .toList();
+                return new GameSyncData(game.appId(), game.name(), game.playtimeMinutes(), achievements);
+            } finally {
+                limiter.release();
             }
-        }
-
-        return new SyncResult.Success(gamesSynced.get(), achievementsSynced.get());
+        };
     }
 
-    private Game syncGame(User user, Long appId, String name, Long playtimeMinutes) {
-        return gameRepository.findByUserIdAndAppId(user.getId(), appId)
-                .map(existing -> {
-                    existing.setPlaytimeMinutes(playtimeMinutes);
-                    existing.setLastSyncedAt(LocalDateTime.now());
-                    return gameRepository.save(existing);
-                })
-                .orElseGet(() -> {
-                    var game = new Game();
-                    game.setUser(user);
-                    game.setAppId(appId);
-                    game.setName(name);
-                    game.setPlaytimeMinutes(playtimeMinutes);
-                    game.setLastSyncedAt(LocalDateTime.now());
-                    return gameRepository.save(game);
-                });
-    }
-
-    private void syncAchievement(Game game, SteamAchievementDto dto, String iconUrl) {
-        var existing = achievementRepository.findByGameIdAndApiName(game.getId(), dto.apiName());
-
-        var achievement = existing.orElseGet(() -> {
-            var a = new Achievement();
-            a.setGame(game);
-            a.setApiName(dto.apiName());
-            return a;
-        });
-
-        achievement.setDisplayName(dto.displayName());
-        achievement.setDescription(dto.description());
-        if (iconUrl != null) achievement.setIconUrl(iconUrl);
-        achievement.setUnlocked(dto.achieved() == 1);
-        if (dto.achieved() == 1 && dto.unlockTime() != null && dto.unlockTime() > 0) {
-            achievement.setUnlockedAt(
-                    LocalDateTime.ofInstant(Instant.ofEpochSecond(dto.unlockTime()), ZoneId.systemDefault())
-            );
+    private GameSyncData await(Future<GameSyncData> future) {
+        try {
+            return future.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Sync interrupted", e);
+        } catch (ExecutionException e) {
+            throw new IllegalStateException("Steam fetch failed", e.getCause());
         }
-        achievementRepository.save(achievement);
     }
 }

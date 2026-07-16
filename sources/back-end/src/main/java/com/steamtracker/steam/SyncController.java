@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,9 +22,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class SyncController {
 
     private final SyncService syncService;
+    private final SyncStatusService syncStatusService;
 
-    public SyncController(SyncService syncService) {
+    public SyncController(SyncService syncService, SyncStatusService syncStatusService) {
         this.syncService = syncService;
+        this.syncStatusService = syncStatusService;
+    }
+
+    @GetMapping("/status")
+    @Operation(summary = "Latest sync status for the authenticated user (for polling background syncs)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Current sync status",
+                    content = @Content(schema = @Schema(implementation = SyncStatusResponse.class))),
+            @ApiResponse(responseCode = "401", description = "Missing or invalid token",
+                    content = @Content(schema = @Schema(implementation = ApiError.class)))
+    })
+    public ResponseEntity<SyncStatusResponse> status(@AuthenticationPrincipal UserDetails userDetails) {
+        var state = syncStatusService.get(userDetails.getUsername());
+        return ResponseEntity.ok(new SyncStatusResponse(state.name()));
     }
 
     @PostMapping

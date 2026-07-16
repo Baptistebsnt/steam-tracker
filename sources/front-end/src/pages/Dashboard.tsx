@@ -9,7 +9,14 @@ import LanguageSwitcher from '@/components/LanguageSwitcher'
 import GameCover from '@/components/GameCover'
 import { useAuth } from '@/lib/auth'
 import { cn } from '@/lib/utils'
-import { ApiError, gamesApi, syncApi, type GameDto, type GlobalStatsDto } from '@/lib/api'
+import {
+  ApiError,
+  gamesApi,
+  syncApi,
+  type GameDto,
+  type GlobalStatsDto,
+  type SyncStatus,
+} from '@/lib/api'
 import { ChevronRight, RefreshCw, Search, Star, Trophy } from 'lucide-react'
 
 function toHours(minutes: number) {
@@ -47,6 +54,7 @@ function Dashboard() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSyncing, setIsSyncing] = useState(false)
+  const [syncStatus, setSyncStatus] = useState<SyncStatus | null>(null)
   const [search, setSearch] = useState('')
   const [sortBy, setSortBy] = useState<SortKey>('playtime')
 
@@ -72,6 +80,36 @@ function Dashboard() {
 
   useEffect(() => {
     loadData()
+  }, [])
+
+  // Poll the background sync (e.g. the one triggered on first Steam login) so the
+  // library refreshes on its own and the user gets feedback while it runs.
+  useEffect(() => {
+    let cancelled = false
+    let timer: ReturnType<typeof setTimeout> | undefined
+    let wasRunning = false
+
+    const poll = async () => {
+      try {
+        const { status } = await syncApi.status()
+        if (cancelled) return
+        setSyncStatus(status)
+        if (status === 'RUNNING') {
+          wasRunning = true
+          timer = setTimeout(poll, 2500)
+        } else if (wasRunning) {
+          await loadData()
+        }
+      } catch {
+        // transient status errors are non-fatal — stop polling silently
+      }
+    }
+    poll()
+
+    return () => {
+      cancelled = true
+      if (timer) clearTimeout(timer)
+    }
   }, [])
 
   const handleSync = async () => {
@@ -134,6 +172,23 @@ function Dashboard() {
           {error && (
             <Card className="border-rose-400/30 bg-rose-400/5 p-4 text-sm text-rose-400">
               {error}
+            </Card>
+          )}
+
+          {syncStatus === 'RUNNING' && (
+            <Card className="flex-row items-center gap-2.5 border-amber-400/30 bg-amber-400/5 p-4 text-sm text-amber-400">
+              <RefreshCw className="size-4 animate-spin" />
+              {t('dashboard.syncStatus.running')}
+            </Card>
+          )}
+          {syncStatus === 'PRIVATE' && games.length === 0 && (
+            <Card className="border-amber-400/30 bg-amber-400/5 p-4 text-sm text-amber-400">
+              {t('dashboard.syncStatus.private')}
+            </Card>
+          )}
+          {(syncStatus === 'FAILED' || syncStatus === 'RATE_LIMITED') && games.length === 0 && (
+            <Card className="border-rose-400/30 bg-rose-400/5 p-4 text-sm text-rose-400">
+              {t('dashboard.syncStatus.failed')}
             </Card>
           )}
 
