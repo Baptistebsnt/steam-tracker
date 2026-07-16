@@ -72,8 +72,8 @@ function GameDetail() {
           </Link>
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            {user?.email && (
-              <span className="font-mono text-xs text-muted-foreground">{user.email}</span>
+            {user?.displayName && (
+              <span className="font-mono text-xs text-muted-foreground">{user.displayName}</span>
             )}
           </div>
         </header>

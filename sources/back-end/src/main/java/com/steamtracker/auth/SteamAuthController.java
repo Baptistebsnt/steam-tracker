@@ -56,8 +56,10 @@ public class SteamAuthController {
                 .path("/auth/steam/callback")
                 .queryParam("token", encode(auth.token()))
                 .queryParam("email", encode(auth.email()))
-                .queryParam("steamId", encode(auth.steamId()))
-                .queryParam("displayName", encode(auth.displayName()));
+                .queryParam("steamId", encode(auth.steamId()));
+        if (auth.displayName() != null) {
+            builder.queryParam("displayName", encode(auth.displayName()));
+        }
         if (auth.avatarUrl() != null) {
             builder.queryParam("avatarUrl", encode(auth.avatarUrl()));
         }

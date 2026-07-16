@@ -15,16 +15,14 @@ public record AuthResponse(
         @Schema(description = "Linked Steam ID", example = "76561198000000000")
         String steamId,
 
-        @Schema(description = "Name to show in the UI (Steam persona or email)", example = "PlayerOne")
+        @Schema(description = "Name to show in the UI (username or Steam persona); null if the user set neither", example = "PlayerOne")
         String displayName,
 
         @Schema(description = "Steam avatar URL, if any")
         String avatarUrl
 ) {
     public static AuthResponse of(String token, User user) {
-        var displayName = (user.getPersonaName() != null && !user.getPersonaName().isBlank())
-                ? user.getPersonaName()
-                : user.getEmail();
-        return new AuthResponse(token, user.getEmail(), user.getSteamId(), displayName, user.getAvatarUrl());
+        return new AuthResponse(token, user.getEmail(), user.getSteamId(),
+                user.resolveDisplayName(), user.getAvatarUrl());
     }
 }

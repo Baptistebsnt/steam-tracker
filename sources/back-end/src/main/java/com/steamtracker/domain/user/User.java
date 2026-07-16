@@ -25,6 +25,9 @@ public class User {
     @Column(name = "steam_id", unique = true)
     private String steamId;
 
+    @Column(name = "username")
+    private String username;
+
     @Column(name = "persona_name")
     private String personaName;
 
@@ -33,5 +36,19 @@ public class User {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    /**
+     * Name to show in the UI. Prefers the user-chosen username, then the cached Steam persona.
+     * Never falls back to the email — the front-end shows a neutral label when this is {@code null}.
+     */
+    public String resolveDisplayName() {
+        if (username != null && !username.isBlank()) {
+            return username;
+        }
+        if (personaName != null && !personaName.isBlank()) {
+            return personaName;
+        }
+        return null;
+    }
 
 }

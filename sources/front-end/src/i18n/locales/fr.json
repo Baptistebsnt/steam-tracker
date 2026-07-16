@@ -6,6 +6,7 @@
     "login": "Se connecter",
     "logout": "Déconnexion",
     "guides": "Guides",
+    "anonymous": "Joueur anonyme",
     "genericError": "Une erreur est survenue."
   },
   "landing": {
@@ -156,6 +157,11 @@
     "accountSection": "Compte",
     "accountSectionHint": "Informations de ton compte steam-tracker.",
     "steamAccount": "Compte Steam",
+    "username": "Pseudo",
+    "usernameHint": "Le nom affiché sur tes guides et dans l'application. Entre 2 et 30 caractères.",
+    "usernamePlaceholder": "Ton pseudo",
+    "usernameSaved": "Pseudo enregistré.",
+    "usernameSaveError": "Impossible d'enregistrer le pseudo.",
     "memberSince": "Membre depuis",
     "steamSection": "Liaison Steam",
     "steamSectionHint": "Lie ton Steam ID pour synchroniser ta bibliothèque et tes succès.",

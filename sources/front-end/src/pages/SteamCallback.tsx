@@ -21,7 +21,7 @@ function SteamCallback() {
         token,
         email,
         steamId: params.get('steamId'),
-        displayName: params.get('displayName') ?? email,
+        displayName: params.get('displayName'),
         avatarUrl: params.get('avatarUrl'),
       })
       navigate('/dashboard', { replace: true })

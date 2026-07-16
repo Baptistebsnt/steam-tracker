@@ -4,7 +4,7 @@ import { authApi, type AuthResponse } from '@/lib/api'
 type AuthUser = {
   email: string
   steamId: string | null
-  displayName: string
+  displayName: string | null
   avatarUrl: string | null
 }
 
@@ -15,6 +15,7 @@ type AuthContextValue = {
   register: (email: string, password: string, steamId?: string) => Promise<void>
   loginWithSteam: (auth: AuthResponse) => void
   setSteamId: (steamId: string | null) => void
+  setDisplayName: (displayName: string | null) => void
   logout: () => void
 }
 
@@ -27,7 +28,7 @@ function readStoredUser(): AuthUser | null {
   return {
     email,
     steamId: localStorage.getItem('steamId'),
-    displayName: localStorage.getItem('displayName') ?? email,
+    displayName: localStorage.getItem('displayName'),
     avatarUrl: localStorage.getItem('avatarUrl'),
   }
 }
@@ -40,7 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('email', auth.email)
     if (auth.steamId) localStorage.setItem('steamId', auth.steamId)
     else localStorage.removeItem('steamId')
-    localStorage.setItem('displayName', auth.displayName)
+    if (auth.displayName) localStorage.setItem('displayName', auth.displayName)
+    else localStorage.removeItem('displayName')
     if (auth.avatarUrl) localStorage.setItem('avatarUrl', auth.avatarUrl)
     else localStorage.removeItem('avatarUrl')
     setUser({
@@ -69,6 +71,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, steamId } : prev))
   }
 
+  const setDisplayName = (displayName: string | null) => {
+    if (displayName) localStorage.setItem('displayName', displayName)
+    else localStorage.removeItem('displayName')
+    setUser((prev) => (prev ? { ...prev, displayName } : prev))
+  }
+
   const logout = () => {
     localStorage.removeItem('token')
     localStorage.removeItem('email')
@@ -87,6 +95,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         register,
         loginWithSteam,
         setSteamId,
+        setDisplayName,
         logout,
       }}
     >

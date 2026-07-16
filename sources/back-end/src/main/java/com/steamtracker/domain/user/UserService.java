@@ -27,18 +27,24 @@ public class UserService {
     @Transactional
     public UserProfileDto updateProfile(String email, UpdateProfileRequest request) {
         var user = findByEmail(email);
-        var steamId = normalize(request.steamId());
 
-        if (steamId != null) {
-            userRepository.findBySteamId(steamId).ifPresent(existing -> {
-                if (!existing.getId().equals(user.getId())) {
-                    throw new ConflictException("Ce Steam ID est déjà lié à un autre compte");
-                }
-            });
+        if (request.steamId() != null) {
+            var steamId = normalize(request.steamId());
+            if (steamId != null) {
+                userRepository.findBySteamId(steamId).ifPresent(existing -> {
+                    if (!existing.getId().equals(user.getId())) {
+                        throw new ConflictException("Ce Steam ID est déjà lié à un autre compte");
+                    }
+                });
+            }
+            user.setSteamId(steamId);
+            refreshPersona(user, steamId);
         }
 
-        user.setSteamId(steamId);
-        refreshPersona(user, steamId);
+        if (request.username() != null) {
+            user.setUsername(normalize(request.username()));
+        }
+
         userRepository.save(user);
         return toDto(user);
     }
@@ -74,6 +80,7 @@ public class UserService {
         return new UserProfileDto(
                 user.getEmail(),
                 user.getSteamId(),
+                user.getUsername(),
                 user.getPersonaName(),
                 user.getAvatarUrl(),
                 user.getCreatedAt());
