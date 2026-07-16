@@ -25,6 +25,12 @@ public class User {
     @Column(name = "steam_id", unique = true)
     private String steamId;
 
+    @Column(name = "persona_name")
+    private String personaName;
+
+    @Column(name = "avatar_url")
+    private String avatarUrl;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 

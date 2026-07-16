@@ -150,6 +150,7 @@
     "subtitle": "Manage your account and Steam link.",
     "accountSection": "Account",
     "accountSectionHint": "Your steam-tracker account information.",
+    "steamAccount": "Steam account",
     "memberSince": "Member since",
     "steamSection": "Steam link",
     "steamSectionHint": "Link your Steam ID to sync your library and achievements.",

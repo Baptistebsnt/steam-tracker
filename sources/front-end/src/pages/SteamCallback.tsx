@@ -17,7 +17,13 @@ function SteamCallback() {
     const error = params.get('error')
 
     if (token && email) {
-      loginWithSteam({ token, email, steamId: params.get('steamId') })
+      loginWithSteam({
+        token,
+        email,
+        steamId: params.get('steamId'),
+        displayName: params.get('displayName') ?? email,
+        avatarUrl: params.get('avatarUrl'),
+      })
       navigate('/dashboard', { replace: true })
     } else {
       navigate(`/login?error=${error ?? 'steam_auth_failed'}`, { replace: true })

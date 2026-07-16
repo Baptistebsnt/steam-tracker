@@ -35,6 +35,8 @@ export type AuthResponse = {
   token: string
   email: string
   steamId: string | null
+  displayName: string
+  avatarUrl: string | null
 }
 
 export type GameDto = {
@@ -90,6 +92,8 @@ export const syncApi = {
 export type UserProfileDto = {
   email: string
   steamId: string | null
+  personaName: string | null
+  avatarUrl: string | null
   createdAt: string
 }
 

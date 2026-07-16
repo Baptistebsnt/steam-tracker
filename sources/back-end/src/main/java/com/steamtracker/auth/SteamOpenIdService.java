@@ -3,6 +3,8 @@ package com.steamtracker.auth;
 import com.steamtracker.auth.dto.AuthResponse;
 import com.steamtracker.domain.user.User;
 import com.steamtracker.domain.user.UserRepository;
+import com.steamtracker.steam.SteamClient;
+import com.steamtracker.steam.SyncService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -36,17 +38,23 @@ public class SteamOpenIdService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final SteamClient steamClient;
+    private final SyncService syncService;
     private final String backendUrl;
 
     public SteamOpenIdService(WebClient steamWebClient,
                               UserRepository userRepository,
                               PasswordEncoder passwordEncoder,
                               JwtService jwtService,
+                              SteamClient steamClient,
+                              SyncService syncService,
                               @Value("${app.backend-url}") String backendUrl) {
         this.webClient = steamWebClient;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.steamClient = steamClient;
+        this.syncService = syncService;
         this.backendUrl = backendUrl;
     }
 
@@ -105,11 +113,24 @@ public class SteamOpenIdService {
 
     /** Finds the account linked to this SteamID, creating one on first login. */
     public AuthResponse authenticate(String steamId) {
-        var user = userRepository.findBySteamId(steamId)
-                .orElseGet(() -> createSteamUser(steamId));
+        var existing = userRepository.findBySteamId(steamId);
+        var user = existing.orElseGet(() -> createSteamUser(steamId));
+
+        // First Steam login: pull the game library in the background so the
+        // dashboard is populated without blocking the OpenID redirect.
+        if (existing.isEmpty()) {
+            var email = user.getEmail();
+            Thread.startVirtualThread(() -> {
+                try {
+                    syncService.syncUser(email);
+                } catch (Exception e) {
+                    log.warn("Initial Steam sync failed for {}: {}", email, e.getMessage());
+                }
+            });
+        }
 
         var token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getSteamId());
+        return AuthResponse.of(token, user);
     }
 
     private User createSteamUser(String steamId) {
@@ -117,6 +138,12 @@ public class SteamOpenIdService {
         user.setEmail("steam_" + steamId + "@steamtracker.local");
         user.setPassword(passwordEncoder.encode(UUID.randomUUID().toString()));
         user.setSteamId(steamId);
+
+        var summary = steamClient.getPlayerSummary(steamId);
+        if (summary != null) {
+            user.setPersonaName(summary.personaName());
+            user.setAvatarUrl(summary.avatarUrl());
+        }
         return userRepository.save(user);
     }
 

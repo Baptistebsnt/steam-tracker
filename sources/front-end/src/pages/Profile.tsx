@@ -58,6 +58,8 @@ function Profile() {
   }
 
   const dirty = steamIdInput.trim() !== (profile?.steamId ?? '')
+  const email = profile?.email ?? user?.email
+  const isSyntheticEmail = email?.endsWith('@steamtracker.local') ?? false
 
   return (
     <div className="dark min-h-svh bg-background text-foreground">
@@ -85,12 +87,29 @@ function Profile() {
               <CardDescription>{t('profile.accountSectionHint')}</CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <Label>{t('common.email')}</Label>
-                <p className="font-mono text-sm text-muted-foreground">
-                  {profile?.email ?? user?.email ?? '—'}
-                </p>
-              </div>
+              {profile?.personaName && (
+                <div className="flex flex-col gap-1.5">
+                  <Label>{t('profile.steamAccount')}</Label>
+                  <div className="flex items-center gap-3">
+                    {profile.avatarUrl && (
+                      <img
+                        src={profile.avatarUrl}
+                        alt=""
+                        className="size-9 rounded-full border border-border"
+                      />
+                    )}
+                    <span className="text-sm font-medium">{profile.personaName}</span>
+                  </div>
+                </div>
+              )}
+              {!isSyntheticEmail && (
+                <div className="flex flex-col gap-1.5">
+                  <Label>{t('common.email')}</Label>
+                  <p className="font-mono text-sm text-muted-foreground">
+                    {profile?.email ?? user?.email ?? '—'}
+                  </p>
+                </div>
+              )}
               {profile?.createdAt && (
                 <div className="flex flex-col gap-1.5">
                   <Label>{t('profile.memberSince')}</Label>

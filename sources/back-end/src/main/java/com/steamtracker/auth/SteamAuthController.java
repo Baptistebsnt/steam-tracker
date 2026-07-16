@@ -52,13 +52,16 @@ public class SteamAuthController {
     }
 
     private URI successRedirect(AuthResponse auth) {
-        return UriComponentsBuilder.fromUriString(frontendUrl)
+        var builder = UriComponentsBuilder.fromUriString(frontendUrl)
                 .path("/auth/steam/callback")
                 .queryParam("token", encode(auth.token()))
                 .queryParam("email", encode(auth.email()))
                 .queryParam("steamId", encode(auth.steamId()))
-                .build(true)
-                .toUri();
+                .queryParam("displayName", encode(auth.displayName()));
+        if (auth.avatarUrl() != null) {
+            builder.queryParam("avatarUrl", encode(auth.avatarUrl()));
+        }
+        return builder.build(true).toUri();
     }
 
     private URI failureRedirect() {

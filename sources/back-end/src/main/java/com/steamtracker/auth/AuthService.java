@@ -43,7 +43,7 @@ public class AuthService {
         userRepository.save(user);
 
         var token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getSteamId());
+        return AuthResponse.of(token, user);
     }
 
     public AuthResponse login(LoginRequest request) {
@@ -58,6 +58,6 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException("Utilisateur introuvable"));
 
         var token = jwtService.generateToken(user.getEmail());
-        return new AuthResponse(token, user.getEmail(), user.getSteamId());
+        return AuthResponse.of(token, user);
     }
 }

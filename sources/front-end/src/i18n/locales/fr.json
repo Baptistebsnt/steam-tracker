@@ -150,6 +150,7 @@
     "subtitle": "Gère ton compte et ta liaison Steam.",
     "accountSection": "Compte",
     "accountSectionHint": "Informations de ton compte steam-tracker.",
+    "steamAccount": "Compte Steam",
     "memberSince": "Membre depuis",
     "steamSection": "Liaison Steam",
     "steamSectionHint": "Lie ton Steam ID pour synchroniser ta bibliothèque et tes succès.",

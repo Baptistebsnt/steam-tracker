@@ -103,7 +103,7 @@ function Dashboard() {
               to="/profile"
               className="mr-1 hidden max-w-40 truncate font-mono text-xs text-muted-foreground transition-colors hover:text-foreground sm:inline"
             >
-              {user?.email}
+              {user?.displayName ?? user?.email}
             </Link>
             <Button
               size="sm"

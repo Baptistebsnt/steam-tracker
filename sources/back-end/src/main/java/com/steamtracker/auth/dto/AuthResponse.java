@@ -1,5 +1,6 @@
 package com.steamtracker.auth.dto;
 
+import com.steamtracker.domain.user.User;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Authentication response containing the JWT token")
@@ -12,5 +13,18 @@ public record AuthResponse(
         String email,
 
         @Schema(description = "Linked Steam ID", example = "76561198000000000")
-        String steamId
-) {}
+        String steamId,
+
+        @Schema(description = "Name to show in the UI (Steam persona or email)", example = "PlayerOne")
+        String displayName,
+
+        @Schema(description = "Steam avatar URL, if any")
+        String avatarUrl
+) {
+    public static AuthResponse of(String token, User user) {
+        var displayName = (user.getPersonaName() != null && !user.getPersonaName().isBlank())
+                ? user.getPersonaName()
+                : user.getEmail();
+        return new AuthResponse(token, user.getEmail(), user.getSteamId(), displayName, user.getAvatarUrl());
+    }
+}
