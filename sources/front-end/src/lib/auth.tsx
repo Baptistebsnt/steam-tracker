@@ -11,6 +11,7 @@ type AuthContextValue = {
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, steamId?: string) => Promise<void>
+  loginWithSteam: (auth: { token: string; email: string; steamId: string | null }) => void
   setSteamId: (steamId: string | null) => void
   logout: () => void
 }
@@ -43,6 +44,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     persist(await authApi.register(email, password, steamId))
   }
 
+  const loginWithSteam = (auth: { token: string; email: string; steamId: string | null }) => {
+    persist(auth)
+  }
+
   const setSteamId = (steamId: string | null) => {
     if (steamId) localStorage.setItem('steamId', steamId)
     else localStorage.removeItem('steamId')
@@ -58,7 +63,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: user !== null, login, register, setSteamId, logout }}
+      value={{
+        user,
+        isAuthenticated: user !== null,
+        login,
+        register,
+        loginWithSteam,
+        setSteamId,
+        logout,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -5,6 +5,7 @@ import com.steamtracker.domain.user.UserDetailsServiceImpl;
 import com.steamtracker.error.ApiError;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -42,6 +43,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/guides/mine").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/guides", "/guides/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

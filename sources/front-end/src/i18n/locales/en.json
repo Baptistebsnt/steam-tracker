@@ -5,6 +5,7 @@
     "password": "Password",
     "login": "Log in",
     "logout": "Log out",
+    "guides": "Guides",
     "genericError": "Something went wrong."
   },
   "landing": {
@@ -12,30 +13,24 @@
       "dashboard": "My dashboard"
     },
     "hero": {
-      "eyebrow": "// backlog, playtime & price watch",
-      "title": "Finally know what's happening in your library.",
-      "subtitle": "Steam Tracker watches your games while you're not playing: backlog gathering dust, price drops, real playtime.",
+      "eyebrow": "// achievements, completion & 100% guides",
+      "title": "Unlock every achievement, game after game.",
+      "subtitle": "Steam Tracker syncs your library, tracks your achievement completion, and opens community guides to help you hit 100%.",
       "ctaConnect": "Connect my Steam ID",
-      "ctaDemo": "See a demo"
+      "ctaGuides": "Browse guides"
     },
-    "stats": {
-      "gamesTracked": "games tracked",
-      "playtimeLogged": "playtime logged",
-      "priceDrops": "price drops"
-    },
-    "alertsLabel": "Latest alerts",
     "features": {
-      "backlog": {
-        "title": "Backlog radar",
-        "body": "Spot the games you bought and never launched, sorted by how long they've been forgotten."
+      "achievements": {
+        "title": "Achievement tracking",
+        "body": "See your completion game by game and spot the achievements you still need to unlock."
       },
-      "price": {
-        "title": "Price watch",
-        "body": "Get alerted as soon as a game on your list drops below your target price."
+      "guides": {
+        "title": "100% guides",
+        "body": "Community step-by-step guides to unlock every achievement of a game."
       },
-      "playtime": {
-        "title": "Playtime ledger",
-        "body": "A precise record of your playtime, week by week, per game."
+      "library": {
+        "title": "Synced library",
+        "body": "Sync your Steam library and real playtime in one click."
       }
     },
     "footer": {
@@ -48,7 +43,10 @@
     "submit": "Log in",
     "submitting": "Logging in…",
     "noAccount": "No account yet?",
-    "createAccount": "Create an account"
+    "createAccount": "Create an account",
+    "or": "or",
+    "withSteam": "Sign in through Steam",
+    "steamError": "Steam sign-in failed. Please try again."
   },
   "register": {
     "title": "Create an account",
@@ -93,6 +91,58 @@
     "loading": "Loading…",
     "empty": "No achievements for this game.",
     "loadError": "Unable to load achievements."
+  },
+  "guides": {
+    "title": "Guides",
+    "subtitle": "Community guides to 100% your favorite games.",
+    "new": "New guide",
+    "back": "Guides",
+    "searchPlaceholder": "Search a guide or game…",
+    "loading": "Loading…",
+    "empty": "No guides yet. Be the first to create one!",
+    "noResults": "No guide matches your search.",
+    "loadError": "Unable to load guides.",
+    "deleteError": "Unable to delete the guide.",
+    "byAuthor": "by {{author}}",
+    "stepCount_one": "{{count}} step",
+    "stepCount_other": "{{count}} steps",
+    "progress": "{{unlocked}} / {{total}} achievements",
+    "steps": "Steps",
+    "edit": "Edit",
+    "delete": "Delete",
+    "confirmDelete": "Confirm?",
+    "scopeAll": "All",
+    "scopeMine": "My guides"
+  },
+  "guideEditor": {
+    "newTitle": "New guide",
+    "editTitle": "Edit guide",
+    "loading": "Loading…",
+    "loadError": "Unable to load the guide.",
+    "saveError": "Unable to save the guide.",
+    "game": "Game",
+    "gameSearchPlaceholder": "Search a Steam game…",
+    "searching": "Searching…",
+    "changeGame": "Change",
+    "gameRequired": "Pick a game first.",
+    "guideTitle": "Guide title",
+    "guideTitlePlaceholder": "e.g. 100% Hades",
+    "description": "Description",
+    "descriptionPlaceholder": "What is this guide about?",
+    "steps": "Steps",
+    "stepTitlePlaceholder": "Step title",
+    "stepContentPlaceholder": "Instructions, tips…",
+    "linkAchievements": "Link achievements",
+    "unlinkAchievement": "Remove achievement",
+    "achievementSearchPlaceholder": "Filter achievements…",
+    "noSchema": "No achievements found for this game.",
+    "moveUp": "Move step up",
+    "moveDown": "Move step down",
+    "removeStep": "Remove step",
+    "addStep": "Add step",
+    "save": "Save guide",
+    "saving": "Saving…",
+    "cancel": "Cancel"
   },
   "profile": {
     "back": "Back",
