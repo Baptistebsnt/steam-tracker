@@ -154,7 +154,7 @@ const Guides = () => {
                       </span>
                     </div>
                     <p className="font-mono text-[11px] text-muted-foreground/70">
-                      {t('guides.byAuthor', { author: guide.authorEmail })}
+                      {t('guides.byAuthor', { author: guide.authorName ?? t('common.anonymous') })}
                     </p>
                   </div>
                 </Card>

@@ -136,7 +136,7 @@ public class GuideService {
                 guide.getAppId(),
                 guide.getGameName(),
                 guide.getTitle(),
-                guide.getAuthor().getEmail(),
+                guide.getAuthor().resolveDisplayName(),
                 guide.getSteps().size(),
                 achievementCount,
                 guide.getCreatedAt()
@@ -177,7 +177,7 @@ public class GuideService {
                 guide.getGameName(),
                 guide.getTitle(),
                 guide.getDescription(),
-                guide.getAuthor().getEmail(),
+                guide.getAuthor().resolveDisplayName(),
                 isAuthor,
                 linkedApiNames.size(),
                 unlockedCount,

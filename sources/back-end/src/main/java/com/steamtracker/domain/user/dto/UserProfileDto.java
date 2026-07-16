@@ -13,6 +13,9 @@ public record UserProfileDto(
         @Schema(description = "Linked Steam ID (null if none)", example = "76561198000000000")
         String steamId,
 
+        @Schema(description = "User-chosen display name (null if none)", example = "PlayerOne")
+        String username,
+
         @Schema(description = "Steam persona name (null if none)", example = "PlayerOne")
         String personaName,
 

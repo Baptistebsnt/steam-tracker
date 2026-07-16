@@ -13,12 +13,17 @@ import { ArrowLeft, Check } from 'lucide-react'
 
 function Profile() {
   const { t, i18n } = useTranslation()
-  const { user, setSteamId } = useAuth()
+  const { setSteamId, setDisplayName } = useAuth()
   const [profile, setProfile] = useState<UserProfileDto | null>(null)
   const [steamIdInput, setSteamIdInput] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [usernameInput, setUsernameInput] = useState('')
+  const [usernameError, setUsernameError] = useState<string | null>(null)
+  const [usernameSaved, setUsernameSaved] = useState(false)
+  const [isSavingUsername, setIsSavingUsername] = useState(false)
 
   useEffect(() => {
     let cancelled = false
@@ -28,6 +33,7 @@ function Profile() {
         if (cancelled) return
         setProfile(data)
         setSteamIdInput(data.steamId ?? '')
+        setUsernameInput(data.username ?? '')
       })
       .catch((err) => {
         if (cancelled) return
@@ -45,7 +51,7 @@ function Profile() {
     setIsSubmitting(true)
     try {
       const trimmed = steamIdInput.trim()
-      const updated = await usersApi.updateSteamId(trimmed === '' ? null : trimmed)
+      const updated = await usersApi.update({ steamId: trimmed })
       setProfile(updated)
       setSteamIdInput(updated.steamId ?? '')
       setSteamId(updated.steamId)
@@ -57,9 +63,27 @@ function Profile() {
     }
   }
 
+  const handleUsernameSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+    setUsernameError(null)
+    setUsernameSaved(false)
+    setIsSavingUsername(true)
+    try {
+      const trimmed = usernameInput.trim()
+      const updated = await usersApi.update({ username: trimmed })
+      setProfile(updated)
+      setUsernameInput(updated.username ?? '')
+      setDisplayName(updated.username ?? updated.personaName ?? null)
+      setUsernameSaved(true)
+    } catch (err) {
+      setUsernameError(err instanceof ApiError ? err.message : t('profile.usernameSaveError'))
+    } finally {
+      setIsSavingUsername(false)
+    }
+  }
+
   const dirty = steamIdInput.trim() !== (profile?.steamId ?? '')
-  const email = profile?.email ?? user?.email
-  const isSyntheticEmail = email?.endsWith('@steamtracker.local') ?? false
+  const usernameDirty = usernameInput.trim() !== (profile?.username ?? '')
 
   return (
     <div className="dark min-h-svh bg-background text-foreground">
@@ -102,14 +126,35 @@ function Profile() {
                   </div>
                 </div>
               )}
-              {!isSyntheticEmail && (
-                <div className="flex flex-col gap-1.5">
-                  <Label>{t('common.email')}</Label>
-                  <p className="font-mono text-sm text-muted-foreground">
-                    {profile?.email ?? user?.email ?? '—'}
+              <form onSubmit={handleUsernameSubmit} className="flex flex-col gap-1.5">
+                <Label htmlFor="username">{t('profile.username')}</Label>
+                <Input
+                  id="username"
+                  autoComplete="off"
+                  maxLength={30}
+                  placeholder={t('profile.usernamePlaceholder')}
+                  value={usernameInput}
+                  onChange={(e) => {
+                    setUsernameInput(e.target.value)
+                    setUsernameSaved(false)
+                  }}
+                />
+                <p className="text-xs text-muted-foreground">{t('profile.usernameHint')}</p>
+                {usernameError && <p className="text-sm text-rose-400">{usernameError}</p>}
+                {usernameSaved && (
+                  <p className="flex items-center gap-1.5 text-sm text-emerald-400">
+                    <Check className="size-4" />
+                    {t('profile.usernameSaved')}
                   </p>
-                </div>
-              )}
+                )}
+                <Button
+                  type="submit"
+                  disabled={isSavingUsername || !usernameDirty}
+                  className="mt-1 self-start"
+                >
+                  {isSavingUsername ? t('profile.saving') : t('profile.save')}
+                </Button>
+              </form>
               {profile?.createdAt && (
                 <div className="flex flex-col gap-1.5">
                   <Label>{t('profile.memberSince')}</Label>

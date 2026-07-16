@@ -35,7 +35,7 @@ export type AuthResponse = {
   token: string
   email: string
   steamId: string | null
-  displayName: string
+  displayName: string | null
   avatarUrl: string | null
 }
 
@@ -95,17 +95,24 @@ export const syncApi = {
 export type UserProfileDto = {
   email: string
   steamId: string | null
+  username: string | null
   personaName: string | null
   avatarUrl: string | null
   createdAt: string
 }
 
+// Only the provided fields are updated. Pass an empty string to clear a field, or omit it to leave it unchanged.
+export type UpdateProfileBody = {
+  steamId?: string | null
+  username?: string | null
+}
+
 export const usersApi = {
   me: () => request<UserProfileDto>('/users/me'),
-  updateSteamId: (steamId: string | null) =>
+  update: (body: UpdateProfileBody) =>
     request<UserProfileDto>('/users/me', {
       method: 'PATCH',
-      body: JSON.stringify({ steamId }),
+      body: JSON.stringify(body),
     }),
 }
 
@@ -114,7 +121,7 @@ export type GuideSummaryDto = {
   appId: number
   gameName: string
   title: string
-  authorEmail: string
+  authorName: string
   stepCount: number
   achievementCount: number
   createdAt: string
@@ -141,7 +148,7 @@ export type GuideDetailDto = {
   gameName: string
   title: string
   description: string | null
-  authorEmail: string
+  authorName: string
   isAuthor: boolean
   linkedAchievements: number
   unlockedAchievements: number

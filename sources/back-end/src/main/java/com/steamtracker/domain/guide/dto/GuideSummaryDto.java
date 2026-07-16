@@ -19,8 +19,8 @@ public record GuideSummaryDto(
         @Schema(description = "Guide title", example = "100% Hades")
         String title,
 
-        @Schema(description = "Author email", example = "user@example.com")
-        String authorEmail,
+        @Schema(description = "Author display name (Steam persona or email)", example = "PlayerOne")
+        String authorName,
 
         @Schema(description = "Number of steps", example = "8")
         int stepCount,

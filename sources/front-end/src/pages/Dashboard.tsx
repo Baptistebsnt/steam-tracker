@@ -141,7 +141,7 @@ function Dashboard() {
               to="/profile"
               className="mr-1 hidden max-w-40 truncate font-mono text-xs text-muted-foreground transition-colors hover:text-foreground sm:inline"
             >
-              {user?.displayName ?? user?.email}
+              {user?.displayName ?? t('common.anonymous')}
             </Link>
             <Button
               size="sm"

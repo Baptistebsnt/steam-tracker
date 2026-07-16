@@ -23,8 +23,8 @@ public record GuideDetailDto(
         @Schema(description = "Guide description")
         String description,
 
-        @Schema(description = "Author email", example = "user@example.com")
-        String authorEmail,
+        @Schema(description = "Author display name (Steam persona or email)", example = "PlayerOne")
+        String authorName,
 
         @Schema(description = "Whether the current reader is the author", example = "false")
         boolean isAuthor,
