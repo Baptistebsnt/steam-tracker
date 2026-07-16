@@ -5,6 +5,7 @@
     "password": "Mot de passe",
     "login": "Se connecter",
     "logout": "Déconnexion",
+    "guides": "Guides",
     "genericError": "Une erreur est survenue."
   },
   "landing": {
@@ -12,30 +13,24 @@
       "dashboard": "Mon dashboard"
     },
     "hero": {
-      "eyebrow": "// backlog, playtime & price watch",
-      "title": "Sache enfin ce qui se passe dans ta bibliothèque.",
-      "subtitle": "Steam Tracker surveille tes jeux pendant que tu n'y joues pas : backlog qui prend la poussière, baisses de prix, temps de jeu réel.",
+      "eyebrow": "// succès, complétion & guides 100%",
+      "title": "Débloque tous tes succès, jeu après jeu.",
+      "subtitle": "Steam Tracker synchronise ta bibliothèque, suit ta complétion de succès et t'ouvre des guides communautaires pour viser le 100%.",
       "ctaConnect": "Connecter mon Steam ID",
-      "ctaDemo": "Voir une démo"
+      "ctaGuides": "Parcourir les guides"
     },
-    "stats": {
-      "gamesTracked": "jeux suivis",
-      "playtimeLogged": "temps loggé",
-      "priceDrops": "baisses de prix"
-    },
-    "alertsLabel": "Dernières alertes",
     "features": {
-      "backlog": {
-        "title": "Backlog radar",
-        "body": "Repère les jeux achetés et jamais lancés, classés par temps d'oubli."
+      "achievements": {
+        "title": "Suivi des succès",
+        "body": "Visualise ta complétion jeu par jeu et repère les succès qu'il te reste à débloquer."
       },
-      "price": {
-        "title": "Price watch",
-        "body": "Alerte dès qu'un jeu de ta liste passe sous ton prix cible."
+      "guides": {
+        "title": "Guides 100%",
+        "body": "Des guides communautaires étape par étape pour débloquer tous les succès d'un jeu."
       },
-      "playtime": {
-        "title": "Playtime ledger",
-        "body": "Un relevé précis du temps joué, semaine par semaine, par jeu."
+      "library": {
+        "title": "Bibliothèque synchronisée",
+        "body": "Synchronise ta bibliothèque Steam et ton temps de jeu réel en un clic."
       }
     },
     "footer": {
@@ -48,7 +43,10 @@
     "submit": "Se connecter",
     "submitting": "Connexion…",
     "noAccount": "Pas encore de compte ?",
-    "createAccount": "Créer un compte"
+    "createAccount": "Créer un compte",
+    "or": "ou",
+    "withSteam": "Se connecter avec Steam",
+    "steamError": "La connexion Steam a échoué. Réessaie."
   },
   "register": {
     "title": "Créer un compte",
@@ -93,6 +91,58 @@
     "loading": "Chargement…",
     "empty": "Aucun succès pour ce jeu.",
     "loadError": "Impossible de charger les succès."
+  },
+  "guides": {
+    "title": "Guides",
+    "subtitle": "Des guides communautaires pour 100%-er tes jeux préférés.",
+    "new": "Nouveau guide",
+    "back": "Guides",
+    "searchPlaceholder": "Rechercher un guide ou un jeu…",
+    "loading": "Chargement…",
+    "empty": "Aucun guide pour l'instant. Sois le premier à en créer un !",
+    "noResults": "Aucun guide ne correspond à ta recherche.",
+    "loadError": "Impossible de charger les guides.",
+    "deleteError": "Impossible de supprimer le guide.",
+    "byAuthor": "par {{author}}",
+    "stepCount_one": "{{count}} étape",
+    "stepCount_other": "{{count}} étapes",
+    "progress": "{{unlocked}} / {{total}} succès",
+    "steps": "Étapes",
+    "edit": "Éditer",
+    "delete": "Supprimer",
+    "confirmDelete": "Confirmer ?",
+    "scopeAll": "Tous",
+    "scopeMine": "Mes guides"
+  },
+  "guideEditor": {
+    "newTitle": "Nouveau guide",
+    "editTitle": "Éditer le guide",
+    "loading": "Chargement…",
+    "loadError": "Impossible de charger le guide.",
+    "saveError": "Impossible d'enregistrer le guide.",
+    "game": "Jeu",
+    "gameSearchPlaceholder": "Rechercher un jeu Steam…",
+    "searching": "Recherche…",
+    "changeGame": "Changer",
+    "gameRequired": "Choisis d'abord un jeu.",
+    "guideTitle": "Titre du guide",
+    "guideTitlePlaceholder": "ex. 100% Hades",
+    "description": "Description",
+    "descriptionPlaceholder": "De quoi parle ce guide ?",
+    "steps": "Étapes",
+    "stepTitlePlaceholder": "Titre de l'étape",
+    "stepContentPlaceholder": "Instructions, astuces…",
+    "linkAchievements": "Lier des succès",
+    "unlinkAchievement": "Retirer le succès",
+    "achievementSearchPlaceholder": "Filtrer les succès…",
+    "noSchema": "Aucun succès trouvé pour ce jeu.",
+    "moveUp": "Monter l'étape",
+    "moveDown": "Descendre l'étape",
+    "removeStep": "Supprimer l'étape",
+    "addStep": "Ajouter une étape",
+    "save": "Enregistrer le guide",
+    "saving": "Enregistrement…",
+    "cancel": "Annuler"
   },
   "profile": {
     "back": "Retour",

@@ -101,3 +101,95 @@ export const usersApi = {
       body: JSON.stringify({ steamId }),
     }),
 }
+
+export type GuideSummaryDto = {
+  id: number
+  appId: number
+  gameName: string
+  title: string
+  authorEmail: string
+  stepCount: number
+  achievementCount: number
+  createdAt: string
+}
+
+export type GuideStepAchievementDto = {
+  apiName: string
+  displayName: string | null
+  iconUrl: string | null
+  unlocked: boolean
+}
+
+export type GuideStepDto = {
+  id: number
+  position: number
+  title: string
+  content: string | null
+  achievements: GuideStepAchievementDto[]
+}
+
+export type GuideDetailDto = {
+  id: number
+  appId: number
+  gameName: string
+  title: string
+  description: string | null
+  authorEmail: string
+  isAuthor: boolean
+  linkedAchievements: number
+  unlockedAchievements: number
+  createdAt: string
+  updatedAt: string
+  steps: GuideStepDto[]
+}
+
+export type GuideAchievementInput = {
+  apiName: string
+  displayName?: string | null
+  iconUrl?: string | null
+}
+
+export type GuideStepInput = {
+  title: string
+  content?: string | null
+  achievements: GuideAchievementInput[]
+}
+
+export type GuideRequest = {
+  appId: number
+  gameName: string
+  title: string
+  description?: string | null
+  steps: GuideStepInput[]
+}
+
+export const guidesApi = {
+  list: (appId?: number) => request<GuideSummaryDto[]>(`/guides${appId ? `?appId=${appId}` : ''}`),
+  mine: () => request<GuideSummaryDto[]>('/guides/mine'),
+  get: (id: number) => request<GuideDetailDto>(`/guides/${id}`),
+  create: (body: GuideRequest) =>
+    request<GuideDetailDto>('/guides', { method: 'POST', body: JSON.stringify(body) }),
+  update: (id: number, body: GuideRequest) =>
+    request<GuideDetailDto>(`/guides/${id}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  remove: (id: number) => request<void>(`/guides/${id}`, { method: 'DELETE' }),
+}
+
+export type SteamGameSearchDto = {
+  appId: number
+  name: string
+  imageUrl: string
+}
+
+export type SteamAchievementSchemaDto = {
+  apiName: string
+  displayName: string
+  description: string
+  iconUrl: string
+}
+
+export const steamApi = {
+  searchGames: (q: string) =>
+    request<SteamGameSearchDto[]>(`/steam/games/search?q=${encodeURIComponent(q)}`),
+  achievementSchema: (appId: number) =>
+    request<SteamAchievementSchemaDto[]>(`/steam/games/${appId}/achievements`),
+}

@@ -3,12 +3,16 @@ package com.steamtracker.steam;
 import com.steamtracker.steam.dto.SteamAchievementDto;
 import com.steamtracker.steam.dto.SteamAchievementSchemaDto;
 import com.steamtracker.steam.dto.SteamGameDto;
+import com.steamtracker.steam.dto.SteamGameSearchDto;
 import com.steamtracker.steam.dto.SteamPlayerSummaryDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +145,37 @@ public class SteamClient {
 
         } catch (Exception e) {
             return Collections.emptyMap();
+        }
+    }
+
+    // Recherche de jeux via le store Steam (endpoint public, sans clé, sur un host différent
+    // de la base-url configurée → on passe une URI absolue qui l'override).
+    public List<SteamGameSearchDto> searchGames(String term) {
+        try {
+            var uri = URI.create("https://store.steampowered.com/api/storesearch/?term="
+                    + URLEncoder.encode(term, StandardCharsets.UTF_8) + "&l=english&cc=US");
+
+            var response = webClient.get()
+                    .uri(uri)
+                    .retrieve()
+                    .bodyToMono(Map.class)
+                    .block();
+
+            if (response == null) return Collections.emptyList();
+
+            var items = (List<Map<String, Object>>) response.get("items");
+            if (items == null) return Collections.emptyList();
+
+            return items.stream()
+                    .map(i -> new SteamGameSearchDto(
+                            ((Number) i.get("id")).longValue(),
+                            (String) i.getOrDefault("name", "Unknown"),
+                            (String) i.getOrDefault("tiny_image", "")
+                    ))
+                    .toList();
+
+        } catch (Exception e) {
+            return Collections.emptyList();
         }
     }
 

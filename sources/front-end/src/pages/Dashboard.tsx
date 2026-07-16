@@ -92,13 +92,27 @@ function Dashboard() {
       <div className="mx-auto flex min-h-svh max-w-5xl flex-col px-6">
         <header className="flex items-center justify-between py-6">
           <Link
-            to="/profile"
+            to="/"
             className="flex items-center gap-2 font-mono text-sm tracking-tight text-muted-foreground transition-colors hover:text-foreground"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
-            {user?.email}
+            {t('common.appName')}
           </Link>
           <div className="flex items-center gap-2">
+            <Link
+              to="/profile"
+              className="mr-1 hidden max-w-40 truncate font-mono text-xs text-muted-foreground transition-colors hover:text-foreground sm:inline"
+            >
+              {user?.email}
+            </Link>
+            <Button
+              size="sm"
+              variant="ghost"
+              className="font-mono text-xs"
+              render={<Link to="/guides" />}
+            >
+              {t('common.guides')}
+            </Button>
             <LanguageSwitcher className="mr-1" />
             <Button
               size="sm"

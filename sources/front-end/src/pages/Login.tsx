@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -12,10 +12,17 @@ function Login() {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { login } = useAuth()
+  const [searchParams] = useSearchParams()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(
+    searchParams.has('error') ? t('login.steamError') : null,
+  )
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSteamLogin = () => {
+    window.location.href = '/api/auth/steam/login'
+  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -67,6 +74,19 @@ function Login() {
               {isSubmitting ? t('login.submitting') : t('login.submit')}
             </Button>
           </form>
+          <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            {t('login.or')}
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full gap-2"
+            onClick={handleSteamLogin}
+          >
+            {t('login.withSteam')}
+          </Button>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {t('login.noAccount')}{' '}
             <Link to="/register" className="text-amber-400 hover:underline">

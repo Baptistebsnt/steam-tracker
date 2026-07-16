@@ -6,21 +6,12 @@ import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
 import { useAuth } from '@/lib/auth'
-import { ArrowRight, Radar, Wallet, Hourglass } from 'lucide-react'
-
-const ticker = [
-  { label: 'Hades II', delta: '-40%', tone: 'up' as const },
-  { label: 'Disco Elysium', delta: 'stale 214d', tone: 'warn' as const },
-  { label: 'Balatro', delta: '-20%', tone: 'up' as const },
-  { label: 'Backlog', delta: '+3 unplayed', tone: 'warn' as const },
-  { label: 'Hollow Knight: Silksong', delta: '-15%', tone: 'up' as const },
-  { label: "Baldur's Gate 3", delta: '86h logged', tone: 'flat' as const },
-]
+import { ArrowRight, Trophy, ListChecks, Library } from 'lucide-react'
 
 const features = [
-  { icon: Radar, tag: '01', key: 'backlog' as const },
-  { icon: Wallet, tag: '02', key: 'price' as const },
-  { icon: Hourglass, tag: '03', key: 'playtime' as const },
+  { icon: Trophy, tag: '01', key: 'achievements' as const },
+  { icon: ListChecks, tag: '02', key: 'guides' as const },
+  { icon: Library, tag: '03', key: 'library' as const },
 ]
 
 function Landing() {
@@ -37,6 +28,14 @@ function Landing() {
             {t('common.appName')}
           </div>
           <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="font-mono text-xs"
+              onClick={() => navigate('/guides')}
+            >
+              {t('common.guides')}
+            </Button>
             <LanguageSwitcher />
             <Button
               variant="ghost"
@@ -68,45 +67,9 @@ function Landing() {
                 {t('landing.hero.ctaConnect')}
                 <ArrowRight className="size-4" />
               </Button>
-              <Button variant="outline">{t('landing.hero.ctaDemo')}</Button>
-            </div>
-
-            <dl className="mt-14 grid grid-cols-3 divide-x divide-border border-y border-border font-mono">
-              {[
-                ['128', t('landing.stats.gamesTracked')],
-                ['612h', t('landing.stats.playtimeLogged')],
-                ['14', t('landing.stats.priceDrops')],
-              ].map(([value, label]) => (
-                <div key={label} className="px-4 py-4 first:pl-0">
-                  <dt className="text-2xl font-medium text-foreground">{value}</dt>
-                  <dd className="mt-1 text-xs text-muted-foreground uppercase">{label}</dd>
-                </div>
-              ))}
-            </dl>
-          </section>
-
-          <section
-            aria-label={t('landing.alertsLabel')}
-            className="relative overflow-hidden rounded-md border border-border bg-card py-3 mask-[linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]"
-          >
-            <div className="animate-[ticker_28s_linear_infinite] motion-reduce:animate-none flex w-max gap-10 font-mono text-sm whitespace-nowrap">
-              {[...ticker, ...ticker].map((item, i) => (
-                <span key={i} className="flex items-center gap-2">
-                  <span
-                    className={
-                      item.tone === 'up'
-                        ? 'text-amber-400'
-                        : item.tone === 'warn'
-                          ? 'text-rose-400/80'
-                          : 'text-muted-foreground'
-                    }
-                  >
-                    {item.tone === 'up' ? '▲' : item.tone === 'warn' ? '●' : '—'}
-                  </span>
-                  <span className="text-foreground">{item.label}</span>
-                  <span className="text-muted-foreground">{item.delta}</span>
-                </span>
-              ))}
+              <Button variant="outline" onClick={() => navigate('/guides')}>
+                {t('landing.hero.ctaGuides')}
+              </Button>
             </div>
           </section>
 
