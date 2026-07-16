@@ -65,13 +65,50 @@
     "syncError": "La synchronisation a échoué.",
     "stats": {
       "gamesTracked": "jeux suivis",
-      "playtimeLogged": "temps loggé"
+      "playtimeLogged": "temps loggé",
+      "achievements": "succès",
+      "completion": "complétion"
     },
+    "mostPlayed": "Le plus joué",
     "library": "Ta bibliothèque",
+    "searchPlaceholder": "Rechercher un jeu…",
+    "sort": {
+      "playtime": "Temps",
+      "completion": "Complétion",
+      "achievements": "Succès",
+      "name": "A→Z"
+    },
     "loading": "Chargement…",
     "empty": "Aucun jeu synchronisé pour l'instant. Lance une synchronisation.",
+    "noResults": "Aucun jeu ne correspond à ta recherche.",
     "playtimePlayed": "{{hours}}h joué",
     "steamIdLinked": "steam id : {{steamId}}",
     "steamIdNone": "aucun steam id lié"
+  },
+  "gameDetail": {
+    "back": "Retour",
+    "game": "Jeu",
+    "achievements": "Succès",
+    "progress": "{{unlocked}} / {{total}} débloqués",
+    "loading": "Chargement…",
+    "empty": "Aucun succès pour ce jeu.",
+    "loadError": "Impossible de charger les succès."
+  },
+  "profile": {
+    "back": "Retour",
+    "title": "Profil",
+    "subtitle": "Gère ton compte et ta liaison Steam.",
+    "accountSection": "Compte",
+    "accountSectionHint": "Informations de ton compte steam-tracker.",
+    "memberSince": "Membre depuis",
+    "steamSection": "Liaison Steam",
+    "steamSectionHint": "Lie ton Steam ID pour synchroniser ta bibliothèque et tes succès.",
+    "steamId": "Steam ID",
+    "steamIdHint": "Ton Steam ID à 17 chiffres (SteamID64). Laisse vide pour délier.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Steam ID enregistré.",
+    "loadError": "Impossible de charger ton profil.",
+    "saveError": "Impossible d'enregistrer le Steam ID."
   }
 }
