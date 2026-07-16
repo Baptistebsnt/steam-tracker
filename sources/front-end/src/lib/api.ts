@@ -41,17 +41,25 @@ export type GameDto = {
   appId: number
   name: string
   playtimeMinutes: number
-  lastPlayed: string | null
+  totalAchievements: number
+  unlockedAchievements: number
+  completionPercent: number
 }
 
 export type GlobalStatsDto = {
-  gamesTracked: number
+  totalGames: number
   totalPlaytimeMinutes: number
+  totalAchievements: number
+  unlockedAchievements: number
+  globalCompletionPercent: number
+  mostPlayedGame: GameDto | null
 }
 
 export type AchievementDto = {
   apiName: string
-  name: string
+  displayName: string
+  description: string | null
+  iconUrl: string | null
   unlocked: boolean
   unlockedAt: string | null
 }
@@ -77,4 +85,19 @@ export const gamesApi = {
 
 export const syncApi = {
   sync: () => request<void>('/sync', { method: 'POST' }),
+}
+
+export type UserProfileDto = {
+  email: string
+  steamId: string | null
+  createdAt: string
+}
+
+export const usersApi = {
+  me: () => request<UserProfileDto>('/users/me'),
+  updateSteamId: (steamId: string | null) =>
+    request<UserProfileDto>('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify({ steamId }),
+    }),
 }

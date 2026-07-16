@@ -65,13 +65,50 @@
     "syncError": "Sync failed.",
     "stats": {
       "gamesTracked": "games tracked",
-      "playtimeLogged": "playtime logged"
+      "playtimeLogged": "playtime logged",
+      "achievements": "achievements",
+      "completion": "completion"
     },
+    "mostPlayed": "Most played",
     "library": "Your library",
+    "searchPlaceholder": "Search a game…",
+    "sort": {
+      "playtime": "Playtime",
+      "completion": "Completion",
+      "achievements": "Achievements",
+      "name": "A→Z"
+    },
     "loading": "Loading…",
     "empty": "No games synced yet. Run a sync.",
+    "noResults": "No game matches your search.",
     "playtimePlayed": "{{hours}}h played",
     "steamIdLinked": "steam id: {{steamId}}",
     "steamIdNone": "no steam id linked"
+  },
+  "gameDetail": {
+    "back": "Back",
+    "game": "Game",
+    "achievements": "Achievements",
+    "progress": "{{unlocked}} / {{total}} unlocked",
+    "loading": "Loading…",
+    "empty": "No achievements for this game.",
+    "loadError": "Unable to load achievements."
+  },
+  "profile": {
+    "back": "Back",
+    "title": "Profile",
+    "subtitle": "Manage your account and Steam link.",
+    "accountSection": "Account",
+    "accountSectionHint": "Your steam-tracker account information.",
+    "memberSince": "Member since",
+    "steamSection": "Steam link",
+    "steamSectionHint": "Link your Steam ID to sync your library and achievements.",
+    "steamId": "Steam ID",
+    "steamIdHint": "Your 17-digit Steam ID (SteamID64). Leave empty to unlink.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Steam ID saved.",
+    "loadError": "Unable to load your profile.",
+    "saveError": "Unable to save the Steam ID."
   }
 }
