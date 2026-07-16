@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
+import SteamLoginButton from '@/components/SteamLoginButton'
 
 function Login() {
   const navigate = useNavigate()
@@ -19,10 +20,6 @@ function Login() {
     searchParams.has('error') ? t('login.steamError') : null,
   )
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const handleSteamLogin = () => {
-    window.location.href = '/api/auth/steam/login'
-  }
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
@@ -79,14 +76,7 @@ function Login() {
             {t('login.or')}
             <span className="h-px flex-1 bg-border" />
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            className="w-full gap-2"
-            onClick={handleSteamLogin}
-          >
-            {t('login.withSteam')}
-          </Button>
+          <SteamLoginButton className="w-full" />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {t('login.noAccount')}{' '}
             <Link to="/register" className="text-amber-400 hover:underline">

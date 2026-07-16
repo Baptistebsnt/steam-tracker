@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useAuth } from '@/lib/auth'
 import { ApiError } from '@/lib/api'
+import SteamLoginButton from '@/components/SteamLoginButton'
 
 function Register() {
   const navigate = useNavigate()
@@ -78,6 +79,12 @@ function Register() {
               {isSubmitting ? t('register.submitting') : t('register.submit')}
             </Button>
           </form>
+          <div className="my-4 flex items-center gap-3 text-xs text-muted-foreground">
+            <span className="h-px flex-1 bg-border" />
+            {t('login.or')}
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <SteamLoginButton className="w-full" />
           <p className="mt-4 text-center text-sm text-muted-foreground">
             {t('register.haveAccount')}{' '}
             <Link to="/login" className="text-amber-400 hover:underline">

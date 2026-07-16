@@ -13,6 +13,12 @@ public record UserProfileDto(
         @Schema(description = "Linked Steam ID (null if none)", example = "76561198000000000")
         String steamId,
 
+        @Schema(description = "Steam persona name (null if none)", example = "PlayerOne")
+        String personaName,
+
+        @Schema(description = "Steam avatar URL (null if none)")
+        String avatarUrl,
+
         @Schema(description = "Account creation date")
         LocalDateTime createdAt
 ) {}

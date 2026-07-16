@@ -1,9 +1,11 @@
 import { createContext, useContext, useState, type ReactNode } from 'react'
-import { authApi } from '@/lib/api'
+import { authApi, type AuthResponse } from '@/lib/api'
 
 type AuthUser = {
   email: string
   steamId: string | null
+  displayName: string
+  avatarUrl: string | null
 }
 
 type AuthContextValue = {
@@ -11,7 +13,7 @@ type AuthContextValue = {
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
   register: (email: string, password: string, steamId?: string) => Promise<void>
-  loginWithSteam: (auth: { token: string; email: string; steamId: string | null }) => void
+  loginWithSteam: (auth: AuthResponse) => void
   setSteamId: (steamId: string | null) => void
   logout: () => void
 }
@@ -22,18 +24,31 @@ function readStoredUser(): AuthUser | null {
   const email = localStorage.getItem('email')
   const token = localStorage.getItem('token')
   if (!email || !token) return null
-  return { email, steamId: localStorage.getItem('steamId') }
+  return {
+    email,
+    steamId: localStorage.getItem('steamId'),
+    displayName: localStorage.getItem('displayName') ?? email,
+    avatarUrl: localStorage.getItem('avatarUrl'),
+  }
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(readStoredUser)
 
-  const persist = (auth: { token: string; email: string; steamId: string | null }) => {
+  const persist = (auth: AuthResponse) => {
     localStorage.setItem('token', auth.token)
     localStorage.setItem('email', auth.email)
     if (auth.steamId) localStorage.setItem('steamId', auth.steamId)
     else localStorage.removeItem('steamId')
-    setUser({ email: auth.email, steamId: auth.steamId })
+    localStorage.setItem('displayName', auth.displayName)
+    if (auth.avatarUrl) localStorage.setItem('avatarUrl', auth.avatarUrl)
+    else localStorage.removeItem('avatarUrl')
+    setUser({
+      email: auth.email,
+      steamId: auth.steamId,
+      displayName: auth.displayName,
+      avatarUrl: auth.avatarUrl,
+    })
   }
 
   const login = async (email: string, password: string) => {
@@ -44,7 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     persist(await authApi.register(email, password, steamId))
   }
 
-  const loginWithSteam = (auth: { token: string; email: string; steamId: string | null }) => {
+  const loginWithSteam = (auth: AuthResponse) => {
     persist(auth)
   }
 
@@ -58,6 +73,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('token')
     localStorage.removeItem('email')
     localStorage.removeItem('steamId')
+    localStorage.removeItem('displayName')
+    localStorage.removeItem('avatarUrl')
     setUser(null)
   }
 

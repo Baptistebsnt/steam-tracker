@@ -4,6 +4,7 @@ import com.steamtracker.domain.user.dto.UpdateProfileRequest;
 import com.steamtracker.domain.user.dto.UserProfileDto;
 import com.steamtracker.error.ConflictException;
 import com.steamtracker.error.ResourceNotFoundException;
+import com.steamtracker.steam.SteamClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final SteamClient steamClient;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, SteamClient steamClient) {
         this.userRepository = userRepository;
+        this.steamClient = steamClient;
     }
 
     @Transactional(readOnly = true)
@@ -35,8 +38,23 @@ public class UserService {
         }
 
         user.setSteamId(steamId);
+        refreshPersona(user, steamId);
         userRepository.save(user);
         return toDto(user);
+    }
+
+    /** Caches the Steam persona/avatar when a SteamID is linked, clears it when unlinked. */
+    private void refreshPersona(User user, String steamId) {
+        if (steamId == null) {
+            user.setPersonaName(null);
+            user.setAvatarUrl(null);
+            return;
+        }
+        var summary = steamClient.getPlayerSummary(steamId);
+        if (summary != null) {
+            user.setPersonaName(summary.personaName());
+            user.setAvatarUrl(summary.avatarUrl());
+        }
     }
 
     private User findByEmail(String email) {
@@ -53,6 +71,11 @@ public class UserService {
     }
 
     private static UserProfileDto toDto(User user) {
-        return new UserProfileDto(user.getEmail(), user.getSteamId(), user.getCreatedAt());
+        return new UserProfileDto(
+                user.getEmail(),
+                user.getSteamId(),
+                user.getPersonaName(),
+                user.getAvatarUrl(),
+                user.getCreatedAt());
     }
 }

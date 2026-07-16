@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import LanguageSwitcher from '@/components/LanguageSwitcher'
+import SteamLoginButton from '@/components/SteamLoginButton'
 import { useAuth } from '@/lib/auth'
 import { ArrowRight, Trophy, ListChecks, Library } from 'lucide-react'
 
@@ -70,6 +71,7 @@ function Landing() {
               <Button variant="outline" onClick={() => navigate('/guides')}>
                 {t('landing.hero.ctaGuides')}
               </Button>
+              {!isAuthenticated && <SteamLoginButton />}
             </div>
           </section>
 
